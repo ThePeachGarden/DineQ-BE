@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!--
+        Spring Boot가 제공하는 기본 설정(defaults.xml, console/file 패턴 등)을 가져온다.
+        덕분에 CONSOLE_LOG_PATTERN, FILE_LOG_PATTERN 같은 프로퍼티를 그대로 재사용할 수 있다.
+    -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!--
+        로그가 쌓일 디렉터리.
+        - 환경변수 LOG_PATH 가 있으면 그 값을 사용 (운영: /app/logs)
+        - 없으면 기본값 ./logs 사용 (로컬 실행 시 프로젝트 루트/logs)
+    -->
+    <property name="LOG_PATH" value="${LOG_PATH:-./logs}"/>
+    <property name="LOG_FILE_NAME" value="dineq"/>
+
+    <!-- 콘솔 출력: docker logs 로 계속 볼 수 있도록 유지 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 파일 출력: 하루 단위 롤링 + 6개월 보관 + 총 용량 상한 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
+
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 자정(KST) 기준으로 dineq-YYYY-MM-DD.log 형태로 분리 -->
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- 180일(약 6개월) 초과 파일 자동 삭제 -->
+            <maxHistory>180</maxHistory>
+
+            <!-- 누적 로그가 5GB 초과 시 오래된 파일부터 삭제 -->
+            <totalSizeCap>5GB</totalSizeCap>
+
+            <!-- 기동 시에도 정책을 즉시 적용해서 초과분을 정리 -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

@@ -39,3 +39,6 @@ out/
 application.yml
 application.properties
 docker-compose.yml
+
+### Logs ###
+logs/

@@ -4,6 +4,7 @@ import com.dineq.dineqbe.domain.entity.QREntity;
 import com.dineq.dineqbe.repository.DiningTableRepository;
 import com.dineq.dineqbe.repository.QRRepository;
 import com.dineq.dineqbe.repository.TableOrderRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @Service
 public class QRService {
 
@@ -46,7 +48,7 @@ public class QRService {
     // 랜덤 토큰 생성
     public String registerQR(String tableId) {
         String token= generateRandomToken();
-        System.out.println("현재 생성된 랜덤 토큰:" + (token));
+        log.info("현재 생성된 랜덤 토큰: {}", token);
 
         QREntity qrEntity = new QREntity();
         qrEntity.setToken(token);
@@ -59,7 +61,7 @@ public class QRService {
     // token, tableId값이 유효한지 데이터베이스에 접근하여 검증
     public void verifyToken(String token, String tableId) {
         if(token == null || token.isEmpty() || tableId == null || tableId.isEmpty()){
-            System.out.println("헤더에 값이 비어있음");
+            log.warn("헤더에 값이 비어있음");
             // return false;
             throw new IllegalArgumentException("헤더에 값이 비어있음");
         }
@@ -74,7 +76,7 @@ public class QRService {
     public void deleteExpiredTokens() {
         LocalDateTime now = LocalDateTime.now().minusMinutes(30);
         qrRepository.deleteByCreatedAtBefore(now);
-        System.out.println("30분 이상 지난 QR 토큰 삭제 완료 at " + LocalDateTime.now());
+        log.info("30분 이상 지난 QR 토큰 삭제 완료 at {}", LocalDateTime.now());
     }
 
     public Boolean checkTable(String tableId) {
@@ -82,7 +84,7 @@ public class QRService {
             Long id= Long.parseLong(tableId);
             return diningTableRepository.findByDiningTableIdAndActivatedTrue(id).isPresent();
         }catch (NumberFormatException e){
-            System.out.println("잘못된 tableId 형식: " + tableId);
+            log.warn("잘못된 tableId 형식: {}", tableId);
             return false;
         }
     }

@@ -9,11 +9,13 @@ import com.dineq.dineqbe.repository.DiningTableRepository;
 import com.dineq.dineqbe.repository.MenuRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CreateDummyData {
@@ -50,7 +52,7 @@ public class CreateDummyData {
                     .build();
             diningTableRepository.save(table);
         }
-        System.out.println("DiningTable 데이터 삽입 완료!");
+        log.info("DiningTable 데이터 삽입 완료!");
     }
 
     private void insertCategoryData() {
@@ -64,7 +66,7 @@ public class CreateDummyData {
                 new CategoryEntity("음료", "마시는 음료", 7)
         );
         categoryRepository.saveAll(categories);
-        System.out.println("CATEGORY 데이터 삽입 완료!");
+        log.info("CATEGORY 데이터 삽입 완료!");
     }
 
     private void insertMenuData() {
@@ -184,7 +186,7 @@ public class CreateDummyData {
 
         );
         menuRepository.saveAll(menus);
-        System.out.println("MENU 데이터 삽입 완료!");
+        log.info("MENU 데이터 삽입 완료!");
     }
     private MenuEntity createMenu(Long categoryId, String name, int price, String info, int priority, String imagePath) {
         CategoryEntity category = categoryRepository.findById(categoryId)

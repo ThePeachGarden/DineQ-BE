@@ -9,6 +9,7 @@ import com.dineq.dineqbe.repository.PaymentHistoryRepository;
 import com.dineq.dineqbe.repository.QRRepository;
 import com.dineq.dineqbe.repository.TableOrderRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class TableService {
 
@@ -119,7 +121,7 @@ public class TableService {
         }
 
         tableOrderRepository.saveAll(orders);
-        System.out.println("총 " + orders.size() + "건의 주문이 테이블 " + request.getFromTableId() + " → " + request.getToTableId() + "로 이동되었습니다.");
+        log.info("총 {}건의 주문이 테이블 {} → {}로 이동되었습니다.", orders.size(), request.getFromTableId(), request.getToTableId());
 
     }
 }
