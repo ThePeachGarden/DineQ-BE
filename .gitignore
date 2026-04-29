@@ -39,3 +39,13 @@ out/
 application.yml
 application.properties
 docker-compose.yml
+
+### Frontend (React/Vite) ###
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env.local
+frontend/npm-debug.log*
+
+### Portable tools (local-only Node etc.) ###
+.tools/
